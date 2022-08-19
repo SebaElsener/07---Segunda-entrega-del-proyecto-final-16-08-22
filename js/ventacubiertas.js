@@ -39,16 +39,20 @@ const stockCubiertas = [
     }
 ]
 
+// Selectores DOM
 const contenedorProductos = document.querySelector(".grillaProductos")
 const grillaWrapper = document.querySelector(".grillaWrapper")
 const btnContinuarCompra = document.querySelector(".btnContinuarCompra")
 const alertaCompra = document.querySelector(".alertaCompra")
 const btnAgregar = document.getElementsByClassName("btnAgregarProducto")
 const DOMCarrito = document.querySelector(".mostrarCarrito")
-let carrito = []
+// Si hay datos en carrito localStorage los trae, sino declara el carrito vacío
+let carrito = JSON.parse(localStorage .getItem('carrito')) || []
+
 let nombreUsuario = ''
 let email = ''
 let html=''
+let precioTotal = []
 
 // Generando la grilla de productos con el array
 for (cubierta of stockCubiertas) {
@@ -73,7 +77,7 @@ const validarDatos = () => {
     nombreUsuario = document.querySelector(".nombreApellido").value
     email = document.querySelector(".email").value
     if (nombreUsuario.length == 0 || email.length == 0) {
-        grillaWrapper.style.display = 'none'
+        alertaCompra.style.aligntext = 'center'
         alertaCompra.innerText = 'Por favor ingrese su nombre, apellido y email'
     } else {
         alertaCompra.innerText = ''
@@ -88,7 +92,7 @@ const validarDatos = () => {
 
 // Bucle event click botones "agregar" de las cards asociados al id de cada objeto del array
 for (let i=0; i<btnAgregar.length; i++){
-    btnAgregar[i].addEventListener("click", function(){
+    btnAgregar[i].addEventListener("click", function (){
         idProductoAgregado = this.parentElement.id
         carrito.push(idProductoAgregado)
         mostrarCarrito()
@@ -96,7 +100,6 @@ for (let i=0; i<btnAgregar.length; i++){
 }
 
 function mostrarCarrito (){
-    console.log(localStorage.nombreApellido)
     // Limpiar DOM carrito
     DOMCarrito.innerHTML = ''
     // Obtener datos usuario local storage para encabezado del carrito
@@ -104,7 +107,7 @@ function mostrarCarrito (){
     tituloCarrito = document.createElement('H4')
     tituloCarrito.innerText = `Estimado/a ${nombreApellidoLocalStorage}`
     DOMCarrito.append(tituloCarrito)
-    // Quitando los repetidos para no mostrar un producto adicional igul en el carrito cada vez que se hace click en agregar
+    // Quitando los repetidos para no mostrar un producto adicional igual en el carrito cada vez que se hace click en agregar
     const productosRepetidos = [...new Set(carrito)]
     for (idProducto of productosRepetidos){
         // Obtener producto del array que coincida con el id
@@ -118,10 +121,54 @@ function mostrarCarrito (){
         li = document.createElement('LI')
         li.innerHTML = `Su compra:  ${productoPorId[0].descripcion} - $${productoPorId[0].precio} x ${unidadesProducto}`
         DOMCarrito.append(li)
+        // Volcando a un array la sumatoria de los precios
+        precioTotal.push(productoPorId[0].precio)
     }
-    // Obtener datos email para msj final pie de carrito
-    emailLocalStorage = JSON.parse(localStorage.getItem('email'))
-    pieCarrito = document.createElement('H6')
-    pieCarrito.innerText = `Muchas gracias, hemos enviado un mail a su casilla ${emailLocalStorage} con los datos para el pago`
-    DOMCarrito.append(pieCarrito)
+
+    // Función precio total carrito
+    sumaTotal()
+
+    // Btn finalizar compra
+    btnFinalizarCompra = document.createElement('BUTTON')
+    btnFinalizarCompra.classList.add('btnFinalizarCompra')
+    btnFinalizarCompra.innerText = 'Finalizar compra'
+    DOMCarrito.append(btnFinalizarCompra)
+
+    // Evento click btn finalizar compra
+    finalizarCompra = document.querySelector('.btnFinalizarCompra')
+    finalizarCompra.addEventListener ("click", () => {
+            // Obtener datos email para msj final pie de carrito
+            emailLocalStorage = JSON.parse(localStorage.getItem('email'))
+            pieCarrito = document.createElement('H6')
+            pieCarrito.innerText = `Muchas gracias, hemos enviado un mail a su casilla ${emailLocalStorage} con los datos para el pago`
+            DOMCarrito.append(pieCarrito)
+            // Sweetalert compra terminada
+            swal({
+                title: "¡Muchas gracias!",
+                text: `Hemos enviado un mail a su casilla ${emailLocalStorage} con los datos para el pago`,
+                icon: "success",
+                button: "Cerrar",
+            });
+            // Vaciar localStorage
+            localStorage.clear()
+            // Limpiar DOM carrito
+            DOMCarrito.innerHTML = ''
+            // Vaciar carrito
+            carrito = []
+            // Limpiar datos usuario
+            document.querySelector(".nombreApellido").value = ''
+            document.querySelector(".email").value = ''
+        }
+    )
+}
+
+function sumaTotal (){
+    // Sumando total
+    const precioAcumulado = precioTotal.reduce((acumulado, valorActual) => {
+        return acumulado + valorActual;
+    }, 0)
+    // Volcando resultado al DOM carrito
+    liPrecioAcumulado = document.createElement('LI')
+    liPrecioAcumulado.innerHTML = `Total de su compra: <strong>$${precioAcumulado}</strong>`
+    DOMCarrito.append(liPrecioAcumulado)
 }

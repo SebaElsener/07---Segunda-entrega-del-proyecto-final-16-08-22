@@ -37,21 +37,23 @@ header {
 
 #mainVentaCubiertas .pedidoDatos {
   margin-bottom: 10px; }
-  #mainVentaCubiertas .pedidoDatos .comprador input {
-    font-size: 1.3rem;
-    display: block;
-    min-width: 400px;
-    margin: 15px auto;
-    padding: 3px 8px;
-    border-radius: 5px;
-    border: none;
-    background-color: #fff292; }
-  #mainVentaCubiertas .pedidoDatos .comprador .btnContinuarCompra {
-    transition: all 1s; }
-    #mainVentaCubiertas .pedidoDatos .comprador .btnContinuarCompra:hover {
-      background-color: #ffbd2e; }
-  #mainVentaCubiertas .pedidoDatos .comprador .alertaCompra {
-    color: red; }
+  #mainVentaCubiertas .pedidoDatos .comprador {
+    text-align: center; }
+    #mainVentaCubiertas .pedidoDatos .comprador input {
+      font-size: 1.3rem;
+      display: block;
+      min-width: 400px;
+      margin: 15px auto;
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: none;
+      background-color: #fff292; }
+    #mainVentaCubiertas .pedidoDatos .comprador .btnContinuarCompra {
+      transition: all 1s; }
+      #mainVentaCubiertas .pedidoDatos .comprador .btnContinuarCompra:hover {
+        background-color: #ffbd2e; }
+    #mainVentaCubiertas .pedidoDatos .comprador .alertaCompra {
+      color: red; }
 
 #mainVentaCubiertas .grillaWrapper {
   opacity: 0;
